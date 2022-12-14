@@ -20,17 +20,17 @@ group by store_location;
 --Question #3 Merge these two datasets so we can see impressions, clicks, and revenue together by date and geo
 --Assuming we want the total revenue (regardless of brand_id) by date and geo
 select distinct case 
-			        when sr.date is null then md.date
-		            when md.date is null then sr.date 
-		            else sr.date
-	                end as new_date 
-	                ,case 
-	   		        when md.geo is null then right(upper(sr.store_location),2)
-	   		        else md.geo
-	                end as new_geo
-	                ,md.impressions
-	                ,md.clicks
-	                ,sum(sr.revenue) over (partition by sr.date, sr.store_location) as revenue  
+		     when sr.date is null then md.date
+		     when md.date is null then sr.date 
+		     else sr.date
+	             end as new_date 
+	        ,case 
+	   	      when md.geo is null then right(upper(sr.store_location),2)
+	   	      else md.geo
+	              end as new_geo
+	        ,md.impressions
+	        ,md.clicks
+	        ,sum(sr.revenue) over (partition by sr.date, sr.store_location) as revenue  
 from  store_revenue sr
 full outer join marketing_data md 
 on sr.date = md.date 
@@ -51,17 +51,17 @@ in TX ($0.57 of revenue per impression or $40.97 of revenue per click), CA has t
  */ 
 with cte as (
 select distinct case 
-			        when sr.date is null then md.date
-		            when md.date is null then sr.date 
-		            else sr.date
-	                end as new_date 
-	                ,case 
-	   		        when md.geo is null then right(upper(sr.store_location),2)
-	   		        else md.geo
-	                end as new_geo
-	                ,md.impressions
-	                ,md.clicks
-	                ,sum(sr.revenue) over (partition by sr.date, sr.store_location) as revenue  
+		     when sr.date is null then md.date
+		     when md.date is null then sr.date 
+		     else sr.date
+	             end as new_date 
+	        ,case 
+	             when md.geo is null then right(upper(sr.store_location),2)
+	   	     else md.geo
+	             end as new_geo
+	         ,md.impressions
+	         ,md.clicks
+	         ,sum(sr.revenue) over (partition by sr.date, sr.store_location) as revenue  
 from  store_revenue sr
 full outer join marketing_data md 
 on sr.date = md.date 
@@ -69,8 +69,8 @@ and right(upper(sr.store_location),2) = upper(md.geo)
 order by new_date)
 
 select new_geo
-	   ,sum(revenue) / sum(impressions) as revenue_per_impression
-	   ,sum(revenue) / sum(clicks) as revenue_per_click
+       ,sum(revenue) / sum(impressions) as revenue_per_impression
+       ,sum(revenue) / sum(clicks) as revenue_per_click
 from cte
 group by new_geo
 order by revenue_per_impression desc, revenue_per_click desc;
@@ -79,8 +79,8 @@ order by revenue_per_impression desc, revenue_per_click desc;
 --Question #5 (Challenge) Generate a query to rank in order the top 10 revenue producing states​
 select states, rank () over (order by revenue desc) as rank
 from 
-	(select right(store_location, 2) as states, sum(revenue) as revenue
-	 from store_revenue
-	 group by states) sr
+    (select right(store_location, 2) as states, sum(revenue) as revenue
+     from store_revenue
+     group by states) sr
 order by rank
 limit 10;
