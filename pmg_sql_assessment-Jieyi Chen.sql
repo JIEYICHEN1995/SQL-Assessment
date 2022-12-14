@@ -8,11 +8,11 @@ Date: Dec 13, 2022
 
 
 --Question #1 Generate a query to get the sum of the clicks of the marketing data​	   
-select sum(clicks) 
+select sum(clicks) as sum_clicks
 from marketing_data;
 
 --Question #2 Generate a query to gather the sum of revenue by store_location from the store_revenue table​
-select store_location, sum(revenue) 
+select store_location, sum(revenue) as total_revenue
 from store_revenue
 group by store_location;
 
